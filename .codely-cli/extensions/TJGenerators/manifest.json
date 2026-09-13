@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "cn.tuanjie.ai.generators": "file:E:/Users/HP/My project/.codely-cli/extensions/TJGenerators/Packages/cn.tuanjie.ai.generators"
+  }
+}
