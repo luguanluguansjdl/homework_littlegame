@@ -17,7 +17,22 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parent
 MD_FILE = BASE / "报告.md"
 HTML_FILE = BASE / "报告.html"
-PDF_FILE = BASE / "实验6-工具调用、Agent与Harness实现.pdf"
+DEFAULT_PDF = BASE / "实验6-工具调用、Agent与Harness实现.pdf"
+
+
+def _cover_field(source: str, label: str) -> str:
+    """从封面表格里取字段，取不到或仍是占位符就返回空串。"""
+    match = re.search(rf"^\|\s*{label}\s*\|\s*(.+?)\s*\|$", source, re.MULTILINE)
+    value = match.group(1).strip() if match else ""
+    return "" if value.startswith("<") else value
+
+
+def pdf_path(source: str) -> Path:
+    """按学习通要求命名：班级-学号-姓名-实验6-工具调用、Agent与Harness实现.pdf"""
+    parts = [_cover_field(source, "班级"), _cover_field(source, "学号"), _cover_field(source, "姓名")]
+    if all(parts):
+        return BASE / f"{'-'.join(parts)}-实验6-工具调用、Agent与Harness实现.pdf"
+    return DEFAULT_PDF
 
 EDGE = Path(r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe")
 
@@ -204,15 +219,16 @@ def main() -> None:
     if not EDGE.is_file():
         sys.exit(f"找不到 Edge：{EDGE}")
 
-    if PDF_FILE.exists():
-        PDF_FILE.unlink()
+    pdf_file = pdf_path(source)
+    if pdf_file.exists():
+        pdf_file.unlink()
 
     profile = BASE / "_edge_profile"
     cmd = [
         str(EDGE), "--headless", "--disable-gpu", "--no-sandbox",
         "--no-pdf-header-footer", "--no-first-run", "--disable-crash-reporter",
         f"--user-data-dir={profile}",
-        f"--print-to-pdf={PDF_FILE}",
+        f"--print-to-pdf={pdf_file}",
         HTML_FILE.as_uri(),
     ]
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
@@ -220,8 +236,8 @@ def main() -> None:
         print(proc.stderr[-800:])
         sys.exit(f"Edge 打印失败，返回码 {proc.returncode}")
 
-    size = PDF_FILE.stat().st_size if PDF_FILE.exists() else 0
-    print(f"PDF  -> {PDF_FILE} ({size/1024:.0f} KB)")
+    size = pdf_file.stat().st_size if pdf_file.exists() else 0
+    print(f"PDF  -> {pdf_file} ({size/1024:.0f} KB)")
 
 
 if __name__ == "__main__":
