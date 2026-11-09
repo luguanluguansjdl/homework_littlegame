@@ -83,8 +83,9 @@ python build_pdf.py
 ```
 
 脚本自带一个极简 Markdown 解析器，把 `报告.md` 转成 HTML，再调用 Edge 无头模式
-打印成 `实验6-工具调用、Agent与Harness实现.pdf`（A4，约 10 页）。
-提交前把 PDF 按学习通要求改名：`班级-学号-姓名-实验6-工具调用、Agent与Harness实现.pdf`。
+打印成 A4 PDF（约 10 页）。文件名会自动按封面里的班级/学号/姓名生成：
+`软工二班-24111302092-丁禹-实验6-工具调用、Agent与Harness实现.pdf`；
+封面还没填时退回默认名 `实验6-工具调用、Agent与Harness实现.pdf`。
 
 ## 七、日志怎么看
 
